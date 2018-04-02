@@ -16,8 +16,9 @@ public class DiagnosticsActivity extends AppCompatActivity implements SensorEven
     private Sensor _accelSensor;
 
     private SensorDataPlotter _rawPlotter;
-    private SensorDataPlotter _smoothPlotter;
+    private SensorMagnitudePlotter _smoothPlotter;
     private SensorDataSmoother _sensorDataSmoother;
+    private SignalMerger _signalMerger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +30,17 @@ public class DiagnosticsActivity extends AppCompatActivity implements SensorEven
         _sensorManager.registerListener(this, _accelSensor, SensorManager.SENSOR_DELAY_UI);
 
         _rawPlotter = new SensorDataPlotter((GraphView)findViewById(R.id.rawGraph), "Raw Accelerometer Data");
-        _smoothPlotter = new SensorDataPlotter((GraphView)findViewById(R.id.smoothGraph), "Smoothed Accelerometer Data");
+        _smoothPlotter = new SensorMagnitudePlotter((GraphView)findViewById(R.id.smoothGraph), "Smoothed Accelerometer Data");
 
         _sensorDataSmoother = new SensorDataSmoother();
+        _signalMerger = new SignalMerger();
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
          if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             _rawPlotter.addSensorData(event.values);
-            _smoothPlotter.addSensorData(_sensorDataSmoother.addData(event.values));
+            _smoothPlotter.addSensorData(_sensorDataSmoother.addData((_signalMerger.addData(event.values))));
         }
     }
 

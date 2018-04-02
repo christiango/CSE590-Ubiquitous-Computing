@@ -24,18 +24,9 @@ public class SensorDataSmoother {
         }
     }
 
-    private AverageSmoothingStrategy _xSmoother = new AverageSmoothingStrategy();
-    private AverageSmoothingStrategy _ySmoother = new AverageSmoothingStrategy();
-    private AverageSmoothingStrategy _zSmoother = new AverageSmoothingStrategy();
-
-
-    public float[] addData(float[] values) {
-        float[] results = new float[3];
-
-        results[0] = _xSmoother.addValue(values[0]);
-        results[1] = _ySmoother.addValue(values[1]);
-        results[2] = _zSmoother.addValue(values[2]);
-
-        return results;
+    private AverageSmoothingStrategy _smoother = new AverageSmoothingStrategy();
+    
+    public float addData(float value) {
+        return _smoother.addValue(value);
     }
 }
