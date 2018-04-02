@@ -15,6 +15,10 @@
         <com.jjoe64.graphview.GraphView
             android:layout_width="match_parent"
             android:layout_height="200dip"
-            android:id="@+id/graph" />
+            android:id="@+id/rawGraph" />
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="200dip"
+            android:id="@+id/smoothGraph" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

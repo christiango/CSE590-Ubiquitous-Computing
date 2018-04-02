@@ -17,10 +17,10 @@ public class SensorDataPlotter {
     private int _timeAxis = 0;
     private final int MAX_DATA_PONTS = 100;
 
-    public SensorDataPlotter(GraphView graph) {
+    public SensorDataPlotter(GraphView graph, String chartTitle) {
         _graph = graph;
 
-        _graph.setTitle("Raw Accelerometer Data");
+        _graph.setTitle(chartTitle);
 
         _graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
         _graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
