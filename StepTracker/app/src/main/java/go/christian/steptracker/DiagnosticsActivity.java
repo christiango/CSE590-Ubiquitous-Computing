@@ -17,6 +17,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements SensorEven
 
     private SensorDataPlotter _rawPlotter;
     private SensorDataPlotter _smoothPlotter;
+    private SensorDataSmoother _sensorDataSmoother;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +30,15 @@ public class DiagnosticsActivity extends AppCompatActivity implements SensorEven
 
         _rawPlotter = new SensorDataPlotter((GraphView)findViewById(R.id.rawGraph), "Raw Accelerometer Data");
         _smoothPlotter = new SensorDataPlotter((GraphView)findViewById(R.id.smoothGraph), "Smoothed Accelerometer Data");
+
+        _sensorDataSmoother = new SensorDataSmoother();
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
          if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             _rawPlotter.addSensorData(event.values);
-            _smoothPlotter.addSensorData(event.values);
+            _smoothPlotter.addSensorData(_sensorDataSmoother.addData(event.values));
         }
     }
 
