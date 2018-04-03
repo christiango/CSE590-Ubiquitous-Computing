@@ -25,7 +25,7 @@ public class SensorDataSmoother {
     }
 
     private AverageSmoothingStrategy _smoother = new AverageSmoothingStrategy();
-    
+
     public float addData(float value) {
         return _smoother.addValue(value);
     }

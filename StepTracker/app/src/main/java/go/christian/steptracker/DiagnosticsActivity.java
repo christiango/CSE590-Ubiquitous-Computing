@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 
@@ -19,6 +20,11 @@ public class DiagnosticsActivity extends AppCompatActivity implements SensorEven
     private SensorMagnitudePlotter _smoothPlotter;
     private SensorDataSmoother _sensorDataSmoother;
     private SignalMerger _signalMerger;
+
+    private ThresholdPeakDetector _thresholdPeakDetector;
+
+    private TextView _stepCountTextView;
+    private int _stepCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +40,23 @@ public class DiagnosticsActivity extends AppCompatActivity implements SensorEven
 
         _sensorDataSmoother = new SensorDataSmoother();
         _signalMerger = new SignalMerger();
+
+        _stepCountTextView = (TextView)findViewById(R.id.stepCountValue);
+
+        _thresholdPeakDetector = new ThresholdPeakDetector();
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
          if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             _rawPlotter.addSensorData(event.values);
-            _smoothPlotter.addSensorData(_sensorDataSmoother.addData((_signalMerger.addData(event.values))));
+            float smoothedDataPoint = _sensorDataSmoother.addData(_signalMerger.addData(event.values));
+            _smoothPlotter.addSensorData(smoothedDataPoint);
+
+            if (_thresholdPeakDetector.addData(smoothedDataPoint)) {
+                _stepCount += 1;
+                _stepCountTextView.setText("" + _stepCount);
+            }
         }
     }
 
