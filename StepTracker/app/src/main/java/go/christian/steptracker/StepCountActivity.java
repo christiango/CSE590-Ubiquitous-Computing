@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class StepCountActivity extends AppCompatActivity implements SensorEventListener {
@@ -25,6 +26,9 @@ public class StepCountActivity extends AppCompatActivity implements SensorEventL
         sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
 
         _stepCountTextView = findViewById(R.id.stepCount);
+
+        ImageView image = findViewById(R.id.progressImage);
+        image.setImageDrawable(new PacmanDrawable());
     }
 
     @Override
