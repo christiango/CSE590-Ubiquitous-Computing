@@ -17,4 +17,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DiagnosticsActivity.class);
         startActivity(intent);
     }
+
+    public void launchStepCount(View view) {
+        Intent intent = new Intent(this, StepCountActivity.class);
+        startActivity(intent);
+    }
 }
