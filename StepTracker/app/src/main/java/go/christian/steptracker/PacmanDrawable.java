@@ -5,6 +5,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.util.Pair;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,52 @@ public class PacmanDrawable extends Drawable {
     _grid.add("-----------------------");
   }
 
+  private Pair<Integer, Integer> findPacman() {
+    for (int row = 0; row < _grid.size(); row += 1) {
+      String line = _grid.get(row);
+      for (int column = 0; column < line.length(); column += 1) {
+        if (line.charAt(column) == 'X') {
+          return new Pair(row, column);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private char getCharacterAtGridLocation(int row, int column) {
+    return _grid.get(row).charAt(column);
+  }
+
+  private void setCharacterAtGridLocation(int row, int column, char newValue) {
+    char[] chars = _grid.get(row).toCharArray();
+    chars[column] = newValue;
+    _grid.set(row, new String(chars));
+  }
+
+  private void movePacman(int steps) {
+    Pair<Integer, Integer> pacmanLocation = findPacman();
+
+    int pacmanRow = pacmanLocation.first;
+    int pacmanColumn = pacmanLocation.second;
+
+    for (int i = 1; i <= steps; i += 1) {
+      // This algorithm assumes pacman can only have 1 valid move
+      setCharacterAtGridLocation(pacmanRow, pacmanColumn, ' ');
+      if (getCharacterAtGridLocation(pacmanRow - 1, pacmanColumn) == '0') {
+        pacmanRow -= 1;
+      } else if (getCharacterAtGridLocation(pacmanRow + 1, pacmanColumn) == '0') {
+        pacmanRow += 1;
+      } else if (getCharacterAtGridLocation(pacmanRow, pacmanColumn - 1) == '0') {
+        pacmanColumn -= 1;
+      } else if (getCharacterAtGridLocation(pacmanRow, pacmanColumn + 1) == '0') {
+        pacmanColumn += 1;
+      }
+
+      setCharacterAtGridLocation(pacmanRow, pacmanColumn, 'X');
+    }
+  }
+
   public PacmanDrawable() {
     // Set up color and text size
     _redPaint = new Paint();
@@ -52,6 +99,8 @@ public class PacmanDrawable extends Drawable {
 
   @Override
   public void draw(Canvas canvas) {
+    movePacman(10);
+
     // The size of a
     int boxSize = 40;
 
