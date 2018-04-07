@@ -20,15 +20,20 @@ public class PacmanDrawable extends Drawable {
   private ArrayList<String> _grid = new ArrayList<>();
 
   private void initializeGrid() {
-    _grid.add("--------------------");
-    _grid.add("|X0000| |0000000000|");
-    _grid.add("|---|0| |0---------|");
-    _grid.add("|   |0| |0000000000|");
-    _grid.add("|   |0| |--------|0|");
-    _grid.add("|00000| |0000|   |0|");
-    _grid.add("|0|---- |0--0|   |0|");
-    _grid.add("|000000000--0000000|");
-    _grid.add("--------------------");
+    _grid.add("-----------------------");
+    _grid.add("|X0000| |0000000000000|");
+    _grid.add("|---|0| |0------------|");
+    _grid.add("|   |0| |0000000000000|");
+    _grid.add("|---|0| |-----------|0|");
+    _grid.add("|00000| |0000000|   |0|");
+    _grid.add("|0|-----|0|---|0|   |0|");
+    _grid.add("|0|   |000|   |0|   |0|");
+    _grid.add("|0|   |0|-|   |0|   |0|");
+    _grid.add("|0|   |0|     |0|   |0|");
+    _grid.add("|0|   |0|     |0|   |0|");
+    _grid.add("|0|---|0|     |0-----0|");
+    _grid.add("|0000000|     |0000000|");
+    _grid.add("-----------------------");
   }
 
   public PacmanDrawable() {
@@ -48,7 +53,7 @@ public class PacmanDrawable extends Drawable {
   @Override
   public void draw(Canvas canvas) {
     // The size of a
-    int boxSize = 30;
+    int boxSize = 40;
 
     for (int row = 0; row < _grid.size(); row += 1) {
       String line = _grid.get(row);
