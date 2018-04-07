@@ -3,7 +3,7 @@ package go.christian.steptracker;
 /**
  * A simple peak detector that just checks if the signal ever passes a threshold
  */
-public class ThresholdPeakDetector {
+public class ThresholdPeakDetector implements IPeakDetector {
     /**
      * If the acceleration value is above this threshold, consider it a peak
      */
