@@ -19,11 +19,13 @@ public class StepCounter {
    *
    * @param values - The raw x, y, and z sensor values
    */
-  public int addData(float[] values) {
+  public void addData(float[] values) {
     if (_peakDetector.addData(_dataSmoother.addData(_signalMerger.addData(values)))) {
       _stepCount += 1;
     }
+  }
 
+  public int getStepCount() {
     return _stepCount;
   }
 }

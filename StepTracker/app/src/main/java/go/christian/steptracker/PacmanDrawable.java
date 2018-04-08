@@ -81,7 +81,7 @@ public class PacmanDrawable extends Drawable {
     _grid.set(row, new String(chars));
   }
 
-  private void movePacman(int steps) {
+  private void movePacman(long steps) {
     int pacmanRow = _gridInfo.pacmanRow;
     int pacmanColumn = _gridInfo.pacmanColumn;
 
@@ -106,7 +106,11 @@ public class PacmanDrawable extends Drawable {
     }
   }
 
-  public PacmanDrawable() {
+  /**
+   * Constructor for a pacman grid
+   * @param ratioComplete - The ratio of the number of pellets pacman should eat
+   */
+  public PacmanDrawable(double ratioComplete) {
     // Set up color and text size
     _redPaint = new Paint();
     _redPaint.setARGB(255, 255, 0, 0);
@@ -124,6 +128,7 @@ public class PacmanDrawable extends Drawable {
     _pelletPaint.setARGB(255, 220, 166, 142);
 
     initializeGrid();
+    movePacman(Math.round(ratioComplete * _gridInfo.pelletCount));
   }
 
   private void drawPacman(Canvas canvas, int xPos, int yPos, int boxSize) {
@@ -155,8 +160,6 @@ public class PacmanDrawable extends Drawable {
 
   @Override
   public void draw(Canvas canvas) {
-    movePacman(10);
-
     // The size of a
     int boxSize = 40;
 

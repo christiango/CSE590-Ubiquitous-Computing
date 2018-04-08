@@ -11,57 +11,68 @@ import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 
-
 public class DiagnosticsActivity extends AppCompatActivity implements SensorEventListener {
-    private SensorManager _sensorManager;
-    private Sensor _accelSensor;
+  private SensorDataPlotter _rawPlotter;
+  private SensorMagnitudePlotter _smoothPlotter;
+  private SensorDataSmoother _sensorDataSmoother;
+  private SignalMerger _signalMerger;
 
-    private SensorDataPlotter _rawPlotter;
-    private SensorMagnitudePlotter _smoothPlotter;
-    private SensorDataSmoother _sensorDataSmoother;
-    private SignalMerger _signalMerger;
+  private ThresholdPeakDetector _thresholdPeakDetector;
 
-    private ThresholdPeakDetector _thresholdPeakDetector;
+  private TextView _stepCountTextView;
+  private TextView _androidStepCountTextView;
 
-    private TextView _stepCountTextView;
-    private int _stepCount = 0;
+  // Set to -1 until we get the first sensor reading from android
+  private int _baseAndroidStepCount = -1;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_diagnostics);
+  private int _stepCount = 0;
 
-        _sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        _accelSensor = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        _sensorManager.registerListener(this, _accelSensor, SensorManager.SENSOR_DELAY_UI);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_diagnostics);
 
-        _rawPlotter = new SensorDataPlotter((GraphView)findViewById(R.id.rawGraph), "Raw Accelerometer Data");
-        _smoothPlotter = new SensorMagnitudePlotter((GraphView)findViewById(R.id.smoothGraph), "Smoothed Accelerometer Data");
+    SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-        _sensorDataSmoother = new SensorDataSmoother();
-        _signalMerger = new SignalMerger();
+    sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+    sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER), SensorManager.SENSOR_DELAY_UI);
 
-        _stepCountTextView = (TextView)findViewById(R.id.stepCountValue);
+    _rawPlotter =
+        new SensorDataPlotter((GraphView) findViewById(R.id.rawGraph), "Raw Accelerometer Data");
+    _smoothPlotter =
+        new SensorMagnitudePlotter(
+            (GraphView) findViewById(R.id.smoothGraph), "Smoothed Accelerometer Data");
 
-        _thresholdPeakDetector = new ThresholdPeakDetector();
-    }
+    _sensorDataSmoother = new SensorDataSmoother();
+    _signalMerger = new SignalMerger();
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            _rawPlotter.addSensorData(event.values);
-            float smoothedDataPoint = _sensorDataSmoother.addData(_signalMerger.addData(event.values));
-            _smoothPlotter.addSensorData(smoothedDataPoint);
+    _stepCountTextView = findViewById(R.id.stepCountValue);
+    _androidStepCountTextView = findViewById(R.id.androidStepCountValue);
 
-            if (_thresholdPeakDetector.addData(smoothedDataPoint)) {
-                _stepCount += 1;
-                _stepCountTextView.setText("" + _stepCount);
-            }
+    _thresholdPeakDetector = new ThresholdPeakDetector();
+  }
+
+  @Override
+  public void onSensorChanged(SensorEvent event) {
+    if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+      _rawPlotter.addSensorData(event.values);
+      float smoothedDataPoint = _sensorDataSmoother.addData(_signalMerger.addData(event.values));
+      _smoothPlotter.addSensorData(smoothedDataPoint);
+
+      if (_thresholdPeakDetector.addData(smoothedDataPoint)) {
+        _stepCount += 1;
+        _stepCountTextView.setText("" + _stepCount);
+      }
+    } else if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+        int sensorValue = Math.round(event.values[0]);
+        if (_baseAndroidStepCount == -1) {
+            _baseAndroidStepCount = sensorValue;
         }
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+        _androidStepCountTextView.setText("" + (sensorValue - _baseAndroidStepCount));
     }
+  }
+
+  @Override
+  public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 }
