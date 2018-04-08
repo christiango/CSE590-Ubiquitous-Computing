@@ -3,6 +3,7 @@ package go.christian.steptracker;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
@@ -13,6 +14,10 @@ public class PacmanDrawable extends Drawable {
   private final Paint _redPaint;
   private final Paint _bluePaint;
   private final Paint _yellowPaint;
+  private final Paint _blackPaint;
+  private final Paint _pelletPaint;
+
+  private String _pacmanDirection = "R";
 
   /**
    * A textual representation of the pacman grid. X is the location of pacman - is a horizontal wall
@@ -71,12 +76,16 @@ public class PacmanDrawable extends Drawable {
       setCharacterAtGridLocation(pacmanRow, pacmanColumn, ' ');
       if (getCharacterAtGridLocation(pacmanRow - 1, pacmanColumn) == '0') {
         pacmanRow -= 1;
+        _pacmanDirection = "U";
       } else if (getCharacterAtGridLocation(pacmanRow + 1, pacmanColumn) == '0') {
         pacmanRow += 1;
+        _pacmanDirection = "D";
       } else if (getCharacterAtGridLocation(pacmanRow, pacmanColumn - 1) == '0') {
         pacmanColumn -= 1;
+        _pacmanDirection = "L";
       } else if (getCharacterAtGridLocation(pacmanRow, pacmanColumn + 1) == '0') {
         pacmanColumn += 1;
+        _pacmanDirection = "R";
       }
 
       setCharacterAtGridLocation(pacmanRow, pacmanColumn, 'X');
@@ -89,12 +98,45 @@ public class PacmanDrawable extends Drawable {
     _redPaint.setARGB(255, 255, 0, 0);
 
     _bluePaint = new Paint();
-    _bluePaint.setARGB(255, 0, 0, 255);
+    _bluePaint.setARGB(255, 33, 34, 213);
 
     _yellowPaint = new Paint();
-    _yellowPaint.setARGB(255, 0, 255, 255);
+    _yellowPaint.setARGB(255, 255, 255, 0);
+
+    _blackPaint = new Paint();
+    _blackPaint.setARGB(255, 0, 0, 0);
+
+    _pelletPaint = new Paint();
+    _pelletPaint.setARGB(255,220, 166, 142);
 
     initializeGrid();
+  }
+
+  private void drawPacman(Canvas canvas, int xPos, int yPos, int boxSize) {
+    canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _blackPaint);
+    canvas.drawCircle(xPos + boxSize / 2, yPos + boxSize / 2, boxSize / 2, _yellowPaint);
+
+    Path path = new Path();
+    path.moveTo(xPos + boxSize / 2, yPos + boxSize / 2);
+
+    if (_pacmanDirection == "L") {
+      path.lineTo(xPos, yPos);
+      path.lineTo(xPos, yPos + boxSize);
+    } else if (_pacmanDirection == "R") {
+      path.lineTo(xPos + boxSize, yPos);
+      path.lineTo(xPos + boxSize, yPos + boxSize);
+    } else if (_pacmanDirection == "D") {
+      path.lineTo(xPos, yPos + boxSize);
+      path.lineTo(xPos + boxSize, yPos + boxSize);
+    } else if (_pacmanDirection == "U") {
+      path.lineTo(xPos, yPos);
+      path.lineTo(xPos + boxSize, yPos);
+    }
+
+    path.moveTo(xPos + boxSize / 2, yPos + boxSize / 2);
+    path.close();
+
+    canvas.drawPath(path, _blackPaint);
   }
 
   @Override
@@ -115,9 +157,12 @@ public class PacmanDrawable extends Drawable {
         if (character == '-' | character == '|') {
           canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _bluePaint);
         } else if (character == 'X') {
-          canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _yellowPaint);
+          drawPacman(canvas, xPos, yPos, boxSize);
         } else if (character == '0') {
-          canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _redPaint);
+          canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _blackPaint);
+          canvas.drawCircle(xPos + boxSize /2, yPos + boxSize/ 2,(float)(boxSize *0.2), _pelletPaint);
+        } else {
+          canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _blackPaint);
         }
       }
     }
