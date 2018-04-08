@@ -13,8 +13,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
 
 public class StepCountActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -75,19 +79,26 @@ public class StepCountActivity extends AppCompatActivity implements SensorEventL
   }
 
   private void showStepCounterDialog() {
-    final CharSequence[] stepGoalOptions =
-        new CharSequence[] {"10", "20", "100", "1000", "10000", "20000"};
+    FrameLayout layout = new FrameLayout(this);
+    final EditText input = new EditText(this);
+    layout.addView(input);
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
     builder
         .setTitle("Set Step Goal")
-        .setItems(
-            stepGoalOptions,
+        .setView(layout)
+        .setPositiveButton(
+            "Ok",
             new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int which) {
-                setNewStepGoal(Integer.parseInt(stepGoalOptions[which].toString()));
+              public void onClick(DialogInterface dialog, int whichButton) {
+                setNewStepGoal(Integer.parseInt(input.getText().toString()));
               }
+            })
+        .setNegativeButton(
+            "Cancel",
+            new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int whichButton) {}
             });
 
     AlertDialog dialog = builder.create();
@@ -97,16 +108,18 @@ public class StepCountActivity extends AppCompatActivity implements SensorEventL
 
   private void setNewStepGoal(int newGoal) {
     _stepGoal = newGoal;
+    updateUI();
   }
 
   private void updateUI() {
     int stepCount = _stepCounter.getStepCount();
 
     ImageView image = findViewById(R.id.progressImage);
-    image.setImageDrawable(new PacmanDrawable(stepCount* 1.0 / _stepGoal));
+    image.setImageDrawable(new PacmanDrawable(stepCount * 1.0 / _stepGoal));
 
-    _stepCountTextView.setText("" +_stepCounter.getStepCount());
+    _stepCountTextView.setText("" + _stepCounter.getStepCount());
 
-    _stepProgressTextView.setText(String.format("(%d%% of target steps)", Math.round(100.0 * stepCount/_stepGoal)));
+    _stepProgressTextView.setText(
+        String.format("(%d%% of target steps)", Math.round(100.0 * stepCount / _stepGoal)));
   }
 }
