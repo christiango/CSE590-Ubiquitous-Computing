@@ -30,7 +30,7 @@ public class SensorMagnitudePlotter {
 
         _graph.getViewport().setYAxisBoundsManual(true);
         _graph.getViewport().setMinY(0);
-        _graph.getViewport().setMaxY(20);
+        _graph.getViewport().setMaxY(5);
 
         _graph.addSeries(_series);
     }

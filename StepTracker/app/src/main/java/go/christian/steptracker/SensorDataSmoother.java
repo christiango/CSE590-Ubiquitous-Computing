@@ -3,7 +3,7 @@ package go.christian.steptracker;
 public class SensorDataSmoother implements IDataSmoother {
   // Smoothing strategy inspired by the code at https://www.arduino.cc/en/Tutorial/Smoothing
   private class AverageSmoothingStrategy {
-    private final int MAX_WINDOW_SIZE = 4;
+    private final int MAX_WINDOW_SIZE = 3;
 
     private float[] _values = new float[MAX_WINDOW_SIZE];
     private int _currentIndex = 0;
