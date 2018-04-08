@@ -21,6 +21,7 @@ public class StepCountActivity extends AppCompatActivity implements SensorEventL
   private StepCounter _stepCounter = StepCounterFactory.GetStepCounter();
 
   private TextView _stepCountTextView;
+  private TextView _stepProgressTextView;
 
   private int _stepGoal = 10000;
 
@@ -34,6 +35,7 @@ public class StepCountActivity extends AppCompatActivity implements SensorEventL
     sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
 
     _stepCountTextView = findViewById(R.id.stepCount);
+    _stepProgressTextView = findViewById(R.id.goalProgress);
 
     updateUI();
   }
@@ -103,6 +105,8 @@ public class StepCountActivity extends AppCompatActivity implements SensorEventL
     ImageView image = findViewById(R.id.progressImage);
     image.setImageDrawable(new PacmanDrawable(stepCount* 1.0 / _stepGoal));
 
-    _stepCountTextView.setText(_stepCounter.getStepCount() + "/" + _stepGoal);
+    _stepCountTextView.setText("" +_stepCounter.getStepCount());
+
+    _stepProgressTextView.setText(String.format("(%d%% of target steps)", Math.round(100.0 * stepCount/_stepGoal)));
   }
 }
