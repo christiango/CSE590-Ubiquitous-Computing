@@ -19,6 +19,8 @@ public class PacmanDrawable extends Drawable {
 
   private String _pacmanDirection = "R";
 
+  private GridInfo _gridInfo;
+
   /**
    * A textual representation of the pacman grid. X is the location of pacman - is a horizontal wall
    * | is a vertical wall, 0 is a pellet space represents an empty space
@@ -40,19 +42,33 @@ public class PacmanDrawable extends Drawable {
     _grid.add("|0|---|0|     |0-----0|");
     _grid.add("|0000000|     |0000000|");
     _grid.add("-----------------------");
+
+    _gridInfo = getGridInfo();
   }
 
-  private Pair<Integer, Integer> findPacman() {
+  private class GridInfo {
+    public int pacmanRow;
+    public int pacmanColumn;
+    public int pelletCount = 0;
+  }
+
+  private GridInfo getGridInfo() {
+    GridInfo result = new GridInfo();
+
     for (int row = 0; row < _grid.size(); row += 1) {
       String line = _grid.get(row);
       for (int column = 0; column < line.length(); column += 1) {
-        if (line.charAt(column) == 'X') {
-          return new Pair(row, column);
+        char character = line.charAt(column);
+        if (character == 'X') {
+          result.pacmanRow = row;
+          result.pacmanColumn = column;
+        } else if (character == '0') {
+          result.pelletCount += 1;
         }
       }
     }
 
-    return null;
+    return result;
   }
 
   private char getCharacterAtGridLocation(int row, int column) {
@@ -66,10 +82,8 @@ public class PacmanDrawable extends Drawable {
   }
 
   private void movePacman(int steps) {
-    Pair<Integer, Integer> pacmanLocation = findPacman();
-
-    int pacmanRow = pacmanLocation.first;
-    int pacmanColumn = pacmanLocation.second;
+    int pacmanRow = _gridInfo.pacmanRow;
+    int pacmanColumn = _gridInfo.pacmanColumn;
 
     for (int i = 1; i <= steps; i += 1) {
       // This algorithm assumes pacman can only have 1 valid move
@@ -107,7 +121,7 @@ public class PacmanDrawable extends Drawable {
     _blackPaint.setARGB(255, 0, 0, 0);
 
     _pelletPaint = new Paint();
-    _pelletPaint.setARGB(255,220, 166, 142);
+    _pelletPaint.setARGB(255, 220, 166, 142);
 
     initializeGrid();
   }
@@ -160,7 +174,8 @@ public class PacmanDrawable extends Drawable {
           drawPacman(canvas, xPos, yPos, boxSize);
         } else if (character == '0') {
           canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _blackPaint);
-          canvas.drawCircle(xPos + boxSize /2, yPos + boxSize/ 2,(float)(boxSize *0.2), _pelletPaint);
+          canvas.drawCircle(
+              xPos + boxSize / 2, yPos + boxSize / 2, (float) (boxSize * 0.2), _pelletPaint);
         } else {
           canvas.drawRect(xPos, yPos, xPos + boxSize, yPos + boxSize, _blackPaint);
         }
