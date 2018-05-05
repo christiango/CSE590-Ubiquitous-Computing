@@ -5,8 +5,9 @@
 SYSTEM_MODE(MANUAL); 
 
 const int RGB_RED_PIN = D0;
-const int RGB_GREEN_PIN  = D1;
-const int RGB_BLUE_PIN  = D2;
+const int RGB_GREEN_PIN = D1;
+const int RGB_BLUE_PIN = D2;
+const int PHOTO_RESISTOR_PIN = D3;
 
 const int RED_INPUT_PIN = D8;
 const int GREEN_INPUT_PIN = D9;
@@ -17,6 +18,7 @@ void setup() {
   pinMode(RGB_RED_PIN, OUTPUT);
   pinMode(RGB_GREEN_PIN, OUTPUT);
   pinMode(RGB_BLUE_PIN, OUTPUT);
+  pinMode(PHOTO_RESISTOR_PIN, INPUT);
 
   // Turn on Serial so we can verify expected colors via Serial Monitor
   Serial.begin(9600); 
