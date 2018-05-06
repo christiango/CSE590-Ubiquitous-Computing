@@ -1,4 +1,4 @@
-package com.example.lianghe.android_ble_basic.BLE;
+package go.christian.smartnightlight.BLE;
 
 import java.util.HashMap;
 

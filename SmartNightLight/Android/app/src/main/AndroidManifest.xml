@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lianghe.android_ble_basic">
+    package="go.christian.smartnightlight">
 
     <uses-sdk
         android:minSdkVersion="18"
@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.lianghe.android_ble_basic.MainActivity">
+        <activity android:name="go.christian.smartnightlight.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +30,7 @@
         <!-- Declare the service that we want to use in our application in the manifest. Learn more
         about Service in Android development: https://developer.android.com/guide/components/services-->
         <service
-            android:name="com.example.lianghe.android_ble_basic.BLE.RBLService"
+            android:name="go.christian.smartnightlight.BLE.RBLService"
             android:enabled="true" />
     </application>
 

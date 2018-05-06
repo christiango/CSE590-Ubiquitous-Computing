@@ -6,7 +6,7 @@
  *
  * Starter code, which contained the complete bluetooth connectivity provided by Liang He
  */
-package com.example.lianghe.android_ble_basic;
+package go.christian.smartnightlight;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -33,8 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.lianghe.android_ble_basic.BLE.RBLGattAttributes;
-import com.example.lianghe.android_ble_basic.BLE.RBLService;
+import go.christian.smartnightlight.BLE.RBLGattAttributes;
+import go.christian.smartnightlight.BLE.RBLService;
 
 import java.util.Locale;
 import java.util.Timer;
