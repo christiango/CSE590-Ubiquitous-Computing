@@ -3,6 +3,8 @@
  *
  * The app is built based on the example code provided by the RedBear Team:
  * https://github.com/RedBearLab/Android
+ *
+ * Starter code, which contained the complete bluetooth connectivity provided by Liang He
  */
 package com.example.lianghe.android_ble_basic;
 

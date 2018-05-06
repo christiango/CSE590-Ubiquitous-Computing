@@ -5,6 +5,8 @@ import java.util.HashMap;
 /**
  * This class includes a small subset of standard GATT attributes for
  * demonstration purposes.
+ *
+ * Starter code, which contained the complete bluetooth connectivity provided by Liang He
  */
 public class RBLGattAttributes {
     private static HashMap<String, String> attributes = new HashMap<String, String>();
