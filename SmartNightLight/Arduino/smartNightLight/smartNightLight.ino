@@ -7,11 +7,11 @@ SYSTEM_MODE(MANUAL);
 const int RGB_RED_PIN = D0;
 const int RGB_GREEN_PIN = D1;
 const int RGB_BLUE_PIN = D2;
-const int PHOTO_RESISTOR_PIN = D13;
 
 const int RED_INPUT_PIN = D8;
 const int GREEN_INPUT_PIN = D9;
 const int BLUE_INPUT_PIN = D10;
+const int PHOTO_RESISTOR_PIN = D11;
 const int DELAY = 200; // delay between changing colors
 
 void setup() {
