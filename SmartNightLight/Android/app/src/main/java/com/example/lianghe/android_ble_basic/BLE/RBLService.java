@@ -1,4 +1,4 @@
-package go.christian.smartnightlight.BLE;
+package com.example.lianghe.android_ble_basic.BLE;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -20,8 +20,7 @@ import java.util.UUID;
 
 /**
  * Service for managing connection and data communication with a GATT server
- * hosted on a given Bluetooth LE device.The code here was provided by
- * Liang He, April 27th, 2018 as a part of the project skeleton.
+ * hosted on a given Bluetooth LE device.
  */
 public class RBLService extends Service{
 

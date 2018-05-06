@@ -1,4 +1,4 @@
-package go.christian.smartnightlight;
+package com.example.lianghe.android_ble_basic;
 
 import org.junit.Test;
 

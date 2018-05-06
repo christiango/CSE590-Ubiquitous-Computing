@@ -4,7 +4,7 @@
  * The app is built based on the example code provided by the RedBear Team:
  * https://github.com/RedBearLab/Android
  */
-package go.christian.smartnightlight;
+package com.example.lianghe.android_ble_basic;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -31,8 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import go.christian.smartnightlight.BLE.RBLGattAttributes;
-import go.christian.smartnightlight.BLE.RBLService;
+import com.example.lianghe.android_ble_basic.BLE.RBLGattAttributes;
+import com.example.lianghe.android_ble_basic.BLE.RBLService;
 
 import java.util.Locale;
 import java.util.Timer;
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                mBluetoothAdapter.startLeScan(mLeScanCallback);
+                boolean x = mBluetoothAdapter.startLeScan(mLeScanCallback);
 
                 try {
                     Thread.sleep(SCAN_PERIOD);
@@ -200,10 +200,10 @@ public class MainActivity extends AppCompatActivity {
                              final byte[] scanRecord) {
 
             runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    byte[] serviceUuidBytes = new byte[16];
-                    String serviceUuid = "";
+				@Override
+				public void run() {
+					byte[] serviceUuidBytes = new byte[16];
+					String serviceUuid = "";
                     for (int i = (21+mNameLen), j = 0; i >= (6+mNameLen); i--, j++) {
                         serviceUuidBytes[j] = scanRecord[i];
                     }
@@ -211,16 +211,16 @@ public class MainActivity extends AppCompatActivity {
                      * This is where you can test if the received UUID matches the defined UUID in the Arduino
                      * Sketch and uploaded to the Duo board: 0x713d0000503e4c75ba943148f18d941e.
                      */
-                    serviceUuid = bytesToHex(serviceUuidBytes);
-                    if (stringToUuidString(serviceUuid).equals(
-                            RBLGattAttributes.BLE_SHIELD_SERVICE
-                                    .toUpperCase(Locale.ENGLISH)) && device.getName().equals(mTargetDeviceName)) {
-                        mDevice = device;
-                        mBluetoothDeviceName = mDevice.getName();
-                        mBluetoothDeviceUUID = serviceUuid;
-                    }
-                }
-            });
+					serviceUuid = bytesToHex(serviceUuidBytes);
+					if (stringToUuidString(serviceUuid).equals(
+							RBLGattAttributes.BLE_SHIELD_SERVICE
+									.toUpperCase(Locale.ENGLISH)) && device.getName().equals(mTargetDeviceName)) {
+						mDevice = device;
+						mBluetoothDeviceName = mDevice.getName();
+						mBluetoothDeviceUUID = serviceUuid;
+					}
+				}
+			});
         }
     };
 

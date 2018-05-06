@@ -1,4 +1,4 @@
-package go.christian.smartnightlight;
+package com.example.lianghe.android_ble_basic;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("go.christian.smartnightlight", appContext.getPackageName());
+        assertEquals("com.example.lianghe.pincontroldemo_android", appContext.getPackageName());
     }
 }

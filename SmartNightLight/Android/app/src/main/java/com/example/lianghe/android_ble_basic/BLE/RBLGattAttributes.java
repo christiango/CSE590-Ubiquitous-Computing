@@ -1,11 +1,10 @@
-package go.christian.smartnightlight.BLE;
+package com.example.lianghe.android_ble_basic.BLE;
 
 import java.util.HashMap;
 
 /**
  * This class includes a small subset of standard GATT attributes for
- * demonstration purposes. The code here was provided by Liang He, April 27th, 2018 as a part of the
- * project skeleton.
+ * demonstration purposes.
  */
 public class RBLGattAttributes {
     private static HashMap<String, String> attributes = new HashMap<String, String>();
