@@ -7,7 +7,7 @@ SYSTEM_MODE(MANUAL);
 const int RGB_RED_PIN = D0;
 const int RGB_GREEN_PIN = D1;
 const int RGB_BLUE_PIN = D2;
-const int PHOTO_RESISTOR_PIN = D3;
+const int PHOTO_RESISTOR_PIN = D13;
 
 const int RED_INPUT_PIN = D8;
 const int GREEN_INPUT_PIN = D9;
@@ -18,6 +18,10 @@ void setup() {
   pinMode(RGB_RED_PIN, OUTPUT);
   pinMode(RGB_GREEN_PIN, OUTPUT);
   pinMode(RGB_BLUE_PIN, OUTPUT);
+
+  pinMode(RED_INPUT_PIN, INPUT);
+  pinMode(GREEN_INPUT_PIN, INPUT);
+  pinMode(BLUE_INPUT_PIN, INPUT);
   pinMode(PHOTO_RESISTOR_PIN, INPUT);
 
   // Turn on Serial so we can verify expected colors via Serial Monitor
@@ -25,16 +29,18 @@ void setup() {
 }
 
 void loop() {
-  int redValue = getColorFromInput(RED_INPUT_PIN);
-  int greenValue = getColorFromInput(GREEN_INPUT_PIN);
-  int blueValue = getColorFromInput(BLUE_INPUT_PIN);
+  double brightnessRatio = 1 - analogRead(PHOTO_RESISTOR_PIN)/4096.0;
+  int redValue = getColorFromInput(RED_INPUT_PIN, brightnessRatio);
+  int greenValue = getColorFromInput(GREEN_INPUT_PIN, brightnessRatio);
+  int blueValue = getColorFromInput(BLUE_INPUT_PIN, brightnessRatio);
   setColor(redValue, greenValue, blueValue);
+  
   delay(DELAY);
 }
 
-int getColorFromInput(int pinNumber)
+int getColorFromInput(int pinNumber, double brightnessRatio)
 {
-  return 255 - map(analogRead(pinNumber), 0, 4096, 0, 255);
+  return round((255 - map(analogRead(pinNumber), 0, 4096, 0, 255)) * brightnessRatio);
 }
 
 void setColor(int red, int green, int blue)
