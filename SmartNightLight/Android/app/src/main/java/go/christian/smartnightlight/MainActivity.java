@@ -60,9 +60,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
   // Declare all variables associated with the UI components
   private Button mConnectBtn = null;
-  private TextView mDeviceName = null;
-  private TextView mRssiValue = null;
-  private TextView mUUID = null;
   private SeekBar mRedSeekBar = null;
   private SeekBar mGreenSeekBar = null;
   private SeekBar mBlueSeekBar = null;
@@ -137,9 +134,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     flag = false;
     mConnState = false;
     mConnectBtn.setText("Connect");
-    mRssiValue.setText("");
-    mDeviceName.setText("");
-    mUUID.setText("");
   }
 
   private void setButtonEnable() {
@@ -164,19 +158,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             getGattService(mBluetoothLeService.getSupportedGattService());
           } else if (RBLService.ACTION_GATT_RSSI.equals(action)) {
-            displayData(intent.getStringExtra(RBLService.EXTRA_DATA));
+
           }
         }
       };
 
-  // Display the received RSSI on the interface
-  private void displayData(String data) {
-    if (data != null) {
-      mRssiValue.setText(data);
-      mDeviceName.setText(mBluetoothDeviceName);
-      mUUID.setText(mBluetoothDeviceUUID);
-    }
-  }
 
   // Get Gatt service information for setting up the communication
   private void getGattService(BluetoothGattService gattService) {
@@ -307,9 +293,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     // Associate all UI components with variables
     mConnectBtn = (Button) findViewById(R.id.connectBtn);
-    mDeviceName = (TextView) findViewById(R.id.deviceName);
-    mRssiValue = (TextView) findViewById(R.id.rssiValue);
-    mUUID = (TextView) findViewById(R.id.uuidValue);
 
     // Connection button click event
     mConnectBtn.setOnClickListener(
