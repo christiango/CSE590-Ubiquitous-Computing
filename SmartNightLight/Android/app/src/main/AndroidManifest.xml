@@ -43,7 +43,6 @@
             android:name=".BLE.RBLService"
             android:enabled="true" />
 
-        <activity android:name=".ColorPickerActivity"></activity>
     </application>
 
 </manifest>
