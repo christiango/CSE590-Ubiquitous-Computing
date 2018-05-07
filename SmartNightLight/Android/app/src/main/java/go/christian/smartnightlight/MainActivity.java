@@ -28,10 +28,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
+
 
 import go.christian.smartnightlight.BLE.RBLGattAttributes;
 import go.christian.smartnightlight.BLE.RBLService;
@@ -53,14 +52,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView mDeviceName = null;
     private TextView mRssiValue = null;
     private TextView mUUID = null;
-    private ToggleButton mDigitalOutBtn;
+    private Button mColorPickerBtn;
     private String mBluetoothDeviceName = "";
     private String mBluetoothDeviceUUID = "";
 
 
     // Declare all Bluetooth stuff
-    private BluetoothGattCharacteristic mCharacteristicTx = null;
-    private RBLService mBluetoothLeService;
+    private static BluetoothGattCharacteristic mCharacteristicTx = null;
+    private static RBLService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice = null;
     private String mDeviceAddress;
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
     private void setButtonDisable() {
         flag = false;
         mConnState = false;
-        mDigitalOutBtn.setEnabled(flag);
         mConnectBtn.setText("Connect");
         mRssiValue.setText("");
         mDeviceName.setText("");
@@ -109,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
     private void setButtonEnable() {
         flag = true;
         mConnState = true;
-        mDigitalOutBtn.setEnabled(flag);
         mConnectBtn.setText("Disconnect");
     }
 
@@ -181,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                boolean x = mBluetoothAdapter.startLeScan(mLeScanCallback);
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
 
                 try {
                     Thread.sleep(SCAN_PERIOD);
@@ -239,6 +236,18 @@ public class MainActivity extends AppCompatActivity {
         return new String(hexChars);
     }
 
+    public static void sendRGBValueToLed(byte r, byte g, byte b) {
+        byte buf[] = new byte[] { (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+
+        buf[1] = r;
+        buf[2] = g;
+        buf[3] = b;
+
+        mCharacteristicTx.setValue(buf);
+        mBluetoothLeService.writeCharacteristic(mCharacteristicTx);
+
+    }
+
     // Convert a string to a UUID format
     private String stringToUuidString(String uuid) {
         StringBuffer newString = new StringBuffer();
@@ -255,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
         return newString.toString();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -265,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         mConnectBtn = (Button) findViewById(R.id.connectBtn);
         mDeviceName = (TextView) findViewById(R.id.deviceName);
         mRssiValue = (TextView) findViewById(R.id.rssiValue);
-        mDigitalOutBtn = (ToggleButton) findViewById(R.id.DOutBtn);
+        mColorPickerBtn = (Button) findViewById(R.id.ColorPickerBtn);
         mUUID = (TextView) findViewById(R.id.uuidValue);
 
         // Connection button click event
@@ -316,25 +324,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Send data to Duo board
         // It has three bytes: maker, data value, reserved
-        mDigitalOutBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-
+        mColorPickerBtn.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                byte buf[] = new byte[] { (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-
-                if (isChecked == true)
-                    buf[1] = 0x01;
-                else
-                    buf[1] = 0x00;
-
-                buf[1] = 0x20;
-                buf[2] = 0x30;
-                buf[2] = 0x01;
-
-                mCharacteristicTx.setValue(buf);
-                mBluetoothLeService.writeCharacteristic(mCharacteristicTx);
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ColorPickerActivity.class);
+                startActivity(intent);
             }
         });
 

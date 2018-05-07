@@ -14,7 +14,7 @@
 #include "ble_config.h"
 SYSTEM_MODE(MANUAL); 
 
-#define RECEIVE_MAX_LEN    3
+#define RECEIVE_MAX_LEN    4
 #define SEND_MAX_LEN    3
 #define BLE_SHORT_NAME_LEN 0x08 // must be in the range of [0x01, 0x09]
 #define BLE_SHORT_NAME 'c','h','r','i','s','g','o' 
@@ -81,7 +81,7 @@ int bleWriteCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size) {
     Serial.println(" ");
     
     if (receive_data[0] == 0x01) { // Command is to control digital out pin
-      Serial.println("GOT RGB DATA:");
+      setColor(receive_data[1], receive_data[2], receive_data[3]);
       Serial.println(receive_data[1]);
       Serial.println(receive_data[2]);
       Serial.println(receive_data[3]);
@@ -127,7 +127,7 @@ void setup() {
 void loop() {
   // Only listen to physical controls if we have not yet gotten a value from the smart phone
   if (!gotSmartPhoneValue) {
-     double brightnessRatio = 1 - analogRead(PHOTO_RESISTOR_PIN)/4096.0;
+    double brightnessRatio = 1 - analogRead(PHOTO_RESISTOR_PIN)/4096.0;
     int redValue = getColorFromInput(RED_INPUT_PIN, brightnessRatio);
     int greenValue = getColorFromInput(GREEN_INPUT_PIN, brightnessRatio);
     int blueValue = getColorFromInput(BLUE_INPUT_PIN, brightnessRatio);
