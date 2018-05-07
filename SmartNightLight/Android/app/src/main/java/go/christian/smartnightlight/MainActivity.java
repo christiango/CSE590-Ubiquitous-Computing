@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -42,7 +43,9 @@ import android.widget.Toast;
 import go.christian.smartnightlight.BLE.RBLGattAttributes;
 import go.christian.smartnightlight.BLE.RBLService;
 
+import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -383,12 +386,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SeekBar.OnSeekBarChangeListener onSeekBarChangeListener =
         new SeekBar.OnSeekBarChangeListener() {
           @Override
-          public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-            setRgbColor(
-                (byte) mRedSeekBar.getProgress(),
-                (byte) mGreenSeekBar.getProgress(),
-                (byte) mBlueSeekBar.getProgress(),
-                false);
+          public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
+            if (fromUser) {
+              setRgbColor(
+                  (byte) mRedSeekBar.getProgress(),
+                  (byte) mGreenSeekBar.getProgress(),
+                  (byte) mBlueSeekBar.getProgress(),
+                  false);
+            }
           }
 
           @Override
@@ -408,15 +413,70 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     mAccelSwitch = findViewById(R.id.accelorometerToggle);
 
+    // There is a cities dropdown that will color the LED to represent the time of day at that city
     mCitiesSpinner = findViewById(R.id.citiesdropdown);
-
     ArrayAdapter<CharSequence> adapter =
-        ArrayAdapter.createFromResource(
-            this, R.array.cities, android.R.layout.simple_spinner_item);
-
+        ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
     mCitiesSpinner.setAdapter(adapter);
+    mCitiesSpinner.setOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            String city = (String) adapterView.getItemAtPosition(i);
+
+            if (city.isEmpty()) {
+              return;
+            }
+
+            TimeZone timeZone = TimeZone.getTimeZone("America/Los_Angeles");
+
+            switch (city) {
+              case "Seattle":
+                timeZone = TimeZone.getTimeZone("America/Los_Angeles");
+                break;
+              case "New York":
+                timeZone = TimeZone.getTimeZone("America/New_York");
+                break;
+              case "London":
+                timeZone = TimeZone.getTimeZone("Europe/London");
+                break;
+              case "Dubai":
+                timeZone = TimeZone.getTimeZone("Asia/Dubai");
+                break;
+              case "Sydney":
+                timeZone = TimeZone.getTimeZone("Australia/Sydney");
+                break;
+              case "Tokyo":
+                timeZone = TimeZone.getTimeZone("Asia/Tokyo");
+                break;
+              case "Honolulu":
+                timeZone = TimeZone.getTimeZone("Pacific/Honolulu");
+                break;
+            }
+
+            int hour = Calendar.getInstance(timeZone).get(Calendar.HOUR_OF_DAY);
+
+            if (hour < 5) {
+              setRgbColor((byte) 35, (byte) 14, (byte) 116, true);
+            } else if (hour < 7) {
+              setRgbColor((byte) 251, (byte) 173, (byte) 13, true);
+            } else if (hour < 10) {
+              setRgbColor((byte) 253, (byte) 202, (byte) 16, true);
+            } else if (hour < 14) {
+              setRgbColor((byte) 253, (byte) 240, (byte) 83, true);
+            } else if (hour < 18) {
+              setRgbColor((byte) 253, (byte) 128, (byte) 12, true);
+            } else if (hour < 20) {
+              setRgbColor((byte) 244, (byte) 47, (byte) 4, true);
+            } else if (hour < 24) {
+              setRgbColor((byte) 17, (byte) 70, (byte) 211, true);
+            }
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
   }
 
   @Override
