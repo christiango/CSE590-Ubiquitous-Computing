@@ -31,8 +31,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
   private SeekBar mGreenSeekBar = null;
   private SeekBar mBlueSeekBar = null;
   private Switch mAccelSwitch = null;
+  private Spinner mCitiesSpinner = null;
 
   private String mBluetoothDeviceName = "";
   private String mBluetoothDeviceUUID = "";
@@ -404,6 +407,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
 
     mAccelSwitch = findViewById(R.id.accelorometerToggle);
+
+    mCitiesSpinner = findViewById(R.id.citiesdropdown);
+
+    ArrayAdapter<CharSequence> adapter =
+        ArrayAdapter.createFromResource(
+            this, R.array.cities, android.R.layout.simple_spinner_item);
+
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+    mCitiesSpinner.setAdapter(adapter);
   }
 
   @Override
@@ -465,7 +478,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
   @Override
   public void onSensorChanged(SensorEvent sensorEvent) {
-    if (mAccelSwitch.isChecked() && sensorEvent.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+    if (mAccelSwitch.isChecked()
+        && sensorEvent.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
       setRgbColor(
           ensureRGBValueClipped(mRValue + sensorEvent.values[0]),
           ensureRGBValueClipped(mGValue + sensorEvent.values[1]),
