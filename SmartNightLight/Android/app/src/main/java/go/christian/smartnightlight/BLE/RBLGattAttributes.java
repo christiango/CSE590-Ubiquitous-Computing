@@ -7,6 +7,7 @@ import java.util.HashMap;
  * demonstration purposes.
  *
  * Starter code, which contained the complete bluetooth connectivity provided by Liang He
+ * https://github.com/jonfroehlich/CSE590Sp2018/tree/master/A03-BLEBasic
  */
 public class RBLGattAttributes {
     private static HashMap<String, String> attributes = new HashMap<String, String>();

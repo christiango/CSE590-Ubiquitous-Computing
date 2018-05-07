@@ -23,6 +23,7 @@ import java.util.UUID;
  * hosted on a given Bluetooth LE device.
  *
  * Starter code, which contained the complete bluetooth connectivity provided by Liang He
+ * https://github.com/jonfroehlich/CSE590Sp2018/tree/master/A03-BLEBasic
  */
 public class RBLService extends Service{
 

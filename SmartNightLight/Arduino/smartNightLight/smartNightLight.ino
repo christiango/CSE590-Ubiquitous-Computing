@@ -9,6 +9,9 @@
  * 
  * Our code is created based on the provided example code (Simple Controls) by the RedBear Team:
  * https://github.com/RedBearLab/Android
+ * 
+ * Starter code provided by Liang He for bluetooth communication
+ * https://github.com/jonfroehlich/CSE590Sp2018/tree/master/A03-BLEBasic
  */
 
 #include "ble_config.h"

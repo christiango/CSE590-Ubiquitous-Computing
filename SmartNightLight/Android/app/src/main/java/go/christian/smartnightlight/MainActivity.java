@@ -4,7 +4,8 @@
  * The app is built based on the example code provided by the RedBear Team:
  * https://github.com/RedBearLab/Android
  *
- * Starter code, which contained the complete bluetooth connectivity provided by Liang He
+ * Starter code, which contained the complete bluetooth connectivity provided by Liang He.
+ * https://github.com/jonfroehlich/CSE590Sp2018/tree/master/A03-BLEBasic
  */
 package go.christian.smartnightlight;
 
