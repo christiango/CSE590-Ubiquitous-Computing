@@ -121,10 +121,10 @@
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp">
+        android:layout_marginLeft="20dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -185,14 +185,12 @@
     </LinearLayout>
 
     <Switch
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:id="@+id/accelorometerToggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:checked="true"
-        android:trackTint="@color/seekbarcolor"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
         android:text="Accelerometer"
-        android:id="@+id/accelorometerToggle"/>
-
+        android:trackTint="@color/seekbarcolor" />
 
 </LinearLayout>
