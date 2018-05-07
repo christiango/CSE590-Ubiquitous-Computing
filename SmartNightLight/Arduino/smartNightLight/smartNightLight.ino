@@ -56,6 +56,7 @@ const int BLUE_INPUT_PIN = D10;
 const int PHOTO_RESISTOR_PIN = D11;
 const int DELAY = 200; // delay between changing colors
 
+bool gotSmartPhoneValue = false;
 
 /**
  * @brief Callback for writing event.
@@ -80,6 +81,12 @@ int bleWriteCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size) {
     Serial.println(" ");
     
     if (receive_data[0] == 0x01) { // Command is to control digital out pin
+      Serial.println("GOT RGB DATA:");
+      Serial.println(receive_data[1]);
+      Serial.println(receive_data[2]);
+      Serial.println(receive_data[3]);
+
+      gotSmartPhoneValue = true;
     }
   }
   return 0;
@@ -118,11 +125,14 @@ void setup() {
 }
 
 void loop() {
-  double brightnessRatio = 1 - analogRead(PHOTO_RESISTOR_PIN)/4096.0;
-  int redValue = getColorFromInput(RED_INPUT_PIN, brightnessRatio);
-  int greenValue = getColorFromInput(GREEN_INPUT_PIN, brightnessRatio);
-  int blueValue = getColorFromInput(BLUE_INPUT_PIN, brightnessRatio);
-  setColor(redValue, greenValue, blueValue);
+  // Only listen to physical controls if we have not yet gotten a value from the smart phone
+  if (!gotSmartPhoneValue) {
+     double brightnessRatio = 1 - analogRead(PHOTO_RESISTOR_PIN)/4096.0;
+    int redValue = getColorFromInput(RED_INPUT_PIN, brightnessRatio);
+    int greenValue = getColorFromInput(GREEN_INPUT_PIN, brightnessRatio);
+    int blueValue = getColorFromInput(BLUE_INPUT_PIN, brightnessRatio);
+    setColor(redValue, greenValue, blueValue);  
+  }
   
   delay(DELAY);
 }

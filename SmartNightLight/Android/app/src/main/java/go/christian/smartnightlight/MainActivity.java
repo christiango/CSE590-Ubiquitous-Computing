@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             return;
 
         setButtonEnable();
+
         startReadRssi();
 
         mCharacteristicTx = gattService
@@ -321,12 +322,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                byte buf[] = new byte[] { (byte) 0x01, (byte) 0x00, (byte) 0x00 };
+                byte buf[] = new byte[] { (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 
                 if (isChecked == true)
                     buf[1] = 0x01;
                 else
                     buf[1] = 0x00;
+
+                buf[1] = 0x20;
+                buf[2] = 0x30;
+                buf[2] = 0x01;
 
                 mCharacteristicTx.setValue(buf);
                 mBluetoothLeService.writeCharacteristic(mCharacteristicTx);
