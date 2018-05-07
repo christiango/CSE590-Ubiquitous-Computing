@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
           public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             String city = (String) adapterView.getItemAtPosition(i);
 
-            if (city.isEmpty()) {
+            if (city.equals("Select a city")) {
               return;
             }
 
