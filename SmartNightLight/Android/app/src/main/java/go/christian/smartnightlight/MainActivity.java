@@ -21,6 +21,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,7 +43,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
   // Define the device name and the length of the name
   // Note the device name and the length should be consistent with the ones defined in the Duo
   // sketch
@@ -78,6 +82,29 @@ public class MainActivity extends AppCompatActivity {
   private static final char[] hexArray = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
   };
+
+  private byte mRValue = 0;
+  private byte mGValue = 0;
+  private byte mBValue = 0;
+
+  private void setRgbColor(byte r, byte g, byte b, boolean updateSlider) {
+    if (r == mRValue && g == mGValue && b == mBValue) {
+      return;
+    }
+
+    mRValue = r;
+    mGValue = g;
+    mBValue = g;
+
+    // Update the slider values
+    if (updateSlider) {
+      mRedSeekBar.setProgress(r);
+      mGreenSeekBar.setProgress(g);
+      mBlueSeekBar.setProgress(b);
+    }
+
+    sendRGBValueToLed(r, g, b);
+  }
 
   // Process service connection. Created by the RedBear Team
   private final ServiceConnection mServiceConnection =
@@ -326,7 +353,6 @@ public class MainActivity extends AppCompatActivity {
           }
         });
 
-
     // Bluetooth setup. Created by the RedBear team.
     if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
       Toast.makeText(this, "Ble not supported", Toast.LENGTH_SHORT).show();
@@ -353,10 +379,11 @@ public class MainActivity extends AppCompatActivity {
         new SeekBar.OnSeekBarChangeListener() {
           @Override
           public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-            MainActivity.sendRGBValueToLed(
+            setRgbColor(
                 (byte) mRedSeekBar.getProgress(),
                 (byte) mGreenSeekBar.getProgress(),
-                (byte) mBlueSeekBar.getProgress());
+                (byte) mBlueSeekBar.getProgress(),
+                false);
           }
 
           @Override
@@ -369,6 +396,10 @@ public class MainActivity extends AppCompatActivity {
     mRedSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
     mGreenSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
     mBlueSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+
+    SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
   }
 
   @Override
@@ -423,4 +454,12 @@ public class MainActivity extends AppCompatActivity {
 
     super.onActivityResult(requestCode, resultCode, data);
   }
+
+  @Override
+  public void onSensorChanged(SensorEvent sensorEvent) {
+    if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {}
+  }
+
+  @Override
+  public void onAccuracyChanged(Sensor sensor, int i) {}
 }
