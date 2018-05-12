@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -55,6 +54,8 @@ import io.makeabilitylab.facetrackerble.camera.GraphicOverlay;
  */
 public class MainActivity extends AppCompatActivity implements BLEListener{
 
+    private SignalSmoother _faceSignalSmoother = new SignalSmoother();
+
     private static final String TAG = "FaceTrackerBLE";
     private static final int RC_HANDLE_GMS = 9001;
     private static final int CAMERA_PREVIEW_WIDTH = 640;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
     // TODO: Define your device name and the length of the name. For your assignment, do not use the
     // default name or you will not be able to discriminate your board from everyone else's board.
     // Note the device name and the length should be consistent with the ones defined in the Duo sketch
-    private final String TARGET_BLE_DEVICE_NAME = "MakeLab";
+    private final String TARGET_BLE_DEVICE_NAME = "chrisgo";
 
     //==============================================================================================
     // Activity Methods
@@ -463,21 +464,7 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
 
             Log.i(TAG, debugFaceInfo);
 
-            // Come up with your own communication protocol to Arduino. Make sure that you change the
-            // RECEIVE_MAX_LEN in your Arduino code to match the # of bytes you are sending.
-            // For example, one protocol might be:
-            // 0 : Control byte
-            // 1 : left eye open probability (0-255 where 0 is eye closed and 1 is eye open)
-            // 2 : right eye open probability (0-255 where 0 is eye closed and 1 is eye open)
-            // 3 : happiness probability (0-255 where 0 sad, 128 is neutral, and 255 is happy)
-            // 4 : x-location of face (0-255 where 0 is left side of camera and 255 is right side of camera)
-            byte[] buf = new byte[] { (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00}; // 5-byte initialization
-
-            // CSE590 Student TODO:
-            // Write code that puts in your data into the buffer
-
-            // Send the data!
-            mBLEDevice.sendData(buf);
+            _faceSignalSmoother.smoothAndSendData(mBLEDevice, SignalUtils.faceToServo(face, CAMERA_PREVIEW_WIDTH));
         }
 
         /**

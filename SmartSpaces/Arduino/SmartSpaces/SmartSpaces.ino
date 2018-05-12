@@ -22,20 +22,13 @@ SYSTEM_MODE(SEMI_AUTOMATIC);
 
 #define BLE_SHORT_NAME 'c','h','r','i','s','g','o'  
 
-/* Define the pins on the Duo board
- * TODO: change and add/subtract the pins here for your applications (as necessary)
- */
-#define LEFT_EYE_ANALOG_OUT_PIN D0
-#define RIGHT_EYE_ANALOG_OUT_PIN D1
-#define HAPPINESS_ANALOG_OUT_PIN D2
-
+#define SERVO_PIN D0
 #define MAX_SERVO_ANGLE  180
 #define MIN_SERVO_ANGLE  0
 
 #define BLE_DEVICE_CONNECTED_DIGITAL_OUT_PIN D7
 
-// happiness meter (servo)
-Servo _happinessServo;
+Servo myservo; 
 
 // Device connected and disconnected callbacks
 void deviceConnectedCallback(BLEStatus_t status, uint16_t handle);
@@ -104,11 +97,8 @@ void setup() {
   Serial.println("BLE start advertising.");
 
   // Setup pins
-  pinMode(LEFT_EYE_ANALOG_OUT_PIN, OUTPUT);
-  pinMode(RIGHT_EYE_ANALOG_OUT_PIN, OUTPUT);
-  pinMode(BLE_DEVICE_CONNECTED_DIGITAL_OUT_PIN, OUTPUT);
-  _happinessServo.attach(HAPPINESS_ANALOG_OUT_PIN);
-  _happinessServo.write( (int)((MAX_SERVO_ANGLE - MIN_SERVO_ANGLE) / 2.0) );
+  myservo.attach(D0);
+  myservo.write( (int)((MAX_SERVO_ANGLE - MIN_SERVO_ANGLE) / 2.0) );
 
   // Start a task to check status of the pins on your RedBear Duo
   // Works by polling every X milliseconds where X is _sendDataFrequency
@@ -174,10 +164,7 @@ int bleReceiveDataCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size
     
     // process the data. 
     if (receive_data[0] == 0x01) { //receive the face data 
-      // CSE590 Student TODO
-      // Write code here that processes the FaceTrackerBLE data from Android
-      // and properly angles the servo + ultrasonic sensor towards the face
-      // Example servo code here: https://github.com/jonfroehlich/CSE590Sp2018/tree/master/L06-Arduino/RedBearDuoServoSweep   
+      myservo.write(receive_data[1]);
     }
   }
   return 0;

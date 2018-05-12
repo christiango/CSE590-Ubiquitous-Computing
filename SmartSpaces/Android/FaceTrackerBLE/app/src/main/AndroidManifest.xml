@@ -34,7 +34,7 @@
         <activity android:name="io.makeabilitylab.facetrackerble.MainActivity"
             android:label="FaceTrackerBLE"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

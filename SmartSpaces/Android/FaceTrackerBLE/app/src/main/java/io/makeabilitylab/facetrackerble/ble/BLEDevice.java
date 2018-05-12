@@ -103,7 +103,7 @@ public class BLEDevice {
   private static UUID RX_UUID = UUID.fromString("713d0002-503e-4c75-ba94-3148f18d941e");
   private static UUID TX_UUID = UUID.fromString("713d0003-503e-4c75-ba94-3148f18d941e");
 
-  private static final int BLE_SCAN_TIME_MS = 2000;
+  private static final int BLE_SCAN_TIME_MS = 10000;
   private static final int READ_RSSI_INTERVAL_MS = 500;
 
   private final Context context;
