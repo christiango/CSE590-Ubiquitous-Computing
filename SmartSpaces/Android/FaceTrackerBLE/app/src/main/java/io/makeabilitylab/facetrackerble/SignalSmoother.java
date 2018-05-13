@@ -3,7 +3,7 @@ import io.makeabilitylab.facetrackerble.SignalUtils;
 import io.makeabilitylab.facetrackerble.ble.BLEDevice;
 
 public class SignalSmoother {
-    private final int WINDOW_SIZE = 10;
+    private final int WINDOW_SIZE = 20;
     private byte[] buffer = new byte[WINDOW_SIZE];
     private int index = 0;
 
