@@ -120,14 +120,11 @@ void loop()
   unsigned long t2;
   unsigned long pulse_width;
   float cm;
-  float inches;
-
+  
   // Hold the trigger pin high for at least 10 us
   digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
-
-  Serial.print("callback");
 
   // Wait for pulse on echo pin
   while ( digitalRead(ECHO_PIN) == 0 );
@@ -147,16 +144,13 @@ void loop()
   // of sound in air at sea level (~340 m/s).
   // Datasheet: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
   cm = pulse_width / 58.0;
-  inches = pulse_width / 148.0;
 
   // Print out results
   if ( pulse_width > MAX_DIST ) {
     Serial.println("Out of range");
   } else {
     Serial.print(cm);
-    Serial.print(" cm \t");
-    Serial.print(inches);
-    Serial.println(" in");
+    Serial.println(" cm");
   }
   
   // The HC-SR04 datasheet recommends waiting at least 60ms before next measurement
