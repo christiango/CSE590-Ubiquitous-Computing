@@ -75,6 +75,9 @@ static btstack_timer_source_t send_characteristic;
 static void bleSendDataTimerCallback(btstack_timer_source_t *ts); // function declaration for sending data callback
 int _sendDataFrequency = 200; // 200ms (how often to read the pins and transmit the data to Android)
 
+// Distance of ultrasonic reading in CM
+float _distance;
+
 void setup() {
   Serial.begin(115200);
   delay(5000);
@@ -125,7 +128,6 @@ void loop()
   unsigned long t1;
   unsigned long t2;
   unsigned long pulse_width;
-  float cm;
   
   // Hold the trigger pin high for at least 10 us
   digitalWrite(TRIG_PIN, HIGH);
@@ -149,17 +151,17 @@ void loop()
   // are found in the datasheet, and calculated from the assumed speed 
   // of sound in air at sea level (~340 m/s).
   // Datasheet: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
-  cm = pulse_width / 58.0;
+  _distance = pulse_width / 58.0;
 
   // Print out results
   if ( pulse_width > MAX_DIST ) {
     Serial.println("Out of range");
   } else {
-    Serial.print(cm);
+    Serial.print(_distance);
     Serial.println(" cm");
   }
 
-  if (cm <= ALARM_DIST_CM) {
+  if (_distance <= ALARM_DIST_CM) {
      digitalWrite(LED_PIN, HIGH);
      tone(BUZZER_PIN, 6000);
      delay(60);
@@ -238,4 +240,10 @@ int bleReceiveDataCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size
  * the connected BLE device (e.g., Android)
  */
 static void bleSendDataTimerCallback(btstack_timer_source_t *ts) {
+  send_data[0] = _distance;
+  ble.sendNotify(send_handle, send_data, SEND_MAX_LEN);
+
+  // Restart timer.
+  ble.setTimer(ts, 200);
+  ble.addTimer(ts);
 }
