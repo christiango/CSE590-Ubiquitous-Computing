@@ -26,7 +26,12 @@ SYSTEM_MODE(SEMI_AUTOMATIC);
 #define MAX_SERVO_ANGLE  180
 #define MIN_SERVO_ANGLE  0
 
+#define TRIG_PIN D1
+#define ECHO_PIN D2
 #define BLE_DEVICE_CONNECTED_DIGITAL_OUT_PIN D7
+
+// Anything over 400 cm (23200 us pulse) is "out of range"
+const unsigned int MAX_DIST = 23200;
 
 Servo myservo; 
 
@@ -99,6 +104,8 @@ void setup() {
   // Setup pins
   myservo.attach(D0);
   myservo.write( (int)((MAX_SERVO_ANGLE - MIN_SERVO_ANGLE) / 2.0) );
+  pinMode(TRIG_PIN, OUTPUT);
+  digitalWrite(TRIG_PIN, LOW);
 
   // Start a task to check status of the pins on your RedBear Duo
   // Works by polling every X milliseconds where X is _sendDataFrequency
@@ -109,7 +116,53 @@ void setup() {
 
 void loop() 
 {
-  // Not currently used. The "meat" of the program is in the callback bleWriteCallback and send_notify
+  unsigned long t1;
+  unsigned long t2;
+  unsigned long pulse_width;
+  float cm;
+  float inches;
+
+  // Hold the trigger pin high for at least 10 us
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  Serial.print("callback");
+
+  // Wait for pulse on echo pin
+  while ( digitalRead(ECHO_PIN) == 0 );
+
+  // Measure how long the echo pin was held high (pulse width)
+  // Note: the micros() counter will overflow after ~70 min
+  // TODO: We probably need to check for a timeout here just in case
+  // the ECHO_PIN never goes HIGH... so like
+  // while ( digitalRead(ECHO_PIN) == 1 && micros() - t1 < threshold);
+  t1 = micros();
+  while ( digitalRead(ECHO_PIN) == 1);
+  t2 = micros();
+  pulse_width = t2 - t1;
+
+  // Calculate distance in centimeters and inches. The constants
+  // are found in the datasheet, and calculated from the assumed speed 
+  // of sound in air at sea level (~340 m/s).
+  // Datasheet: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
+  cm = pulse_width / 58.0;
+  inches = pulse_width / 148.0;
+
+  // Print out results
+  if ( pulse_width > MAX_DIST ) {
+    Serial.println("Out of range");
+  } else {
+    Serial.print(cm);
+    Serial.print(" cm \t");
+    Serial.print(inches);
+    Serial.println(" in");
+  }
+  
+  // The HC-SR04 datasheet recommends waiting at least 60ms before next measurement
+  // in order to prevent accidentally noise between trigger and echo
+  // See: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
+  delay(60);
 }
 
 /**
@@ -179,8 +232,4 @@ int bleReceiveDataCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size
  * the connected BLE device (e.g., Android)
  */
 static void bleSendDataTimerCallback(btstack_timer_source_t *ts) {
-  // CSE590 Student TODO
-  // Write code that uses the ultrasonic sensor and transmits this to Android
-  // Example ultrasonic code here: https://github.com/jonfroehlich/CSE590Sp2018/tree/master/L06-Arduino/RedBearDuoUltrasonicRangeFinder
-  // Also need to check if distance measurement < threshold and sound alarm
 }
