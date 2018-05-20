@@ -29,9 +29,13 @@ SYSTEM_MODE(SEMI_AUTOMATIC);
 #define TRIG_PIN D1
 #define ECHO_PIN D2
 #define BLE_DEVICE_CONNECTED_DIGITAL_OUT_PIN D7
+#define LED_PIN D8
+#define BUZZER_PIN D9
 
 // Anything over 400 cm (23200 us pulse) is "out of range"
 const unsigned int MAX_DIST = 23200;
+
+const unsigned int ALARM_DIST_CM = 50;
 
 Servo myservo; 
 
@@ -106,6 +110,8 @@ void setup() {
   myservo.write( (int)((MAX_SERVO_ANGLE - MIN_SERVO_ANGLE) / 2.0) );
   pinMode(TRIG_PIN, OUTPUT);
   digitalWrite(TRIG_PIN, LOW);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
 
   // Start a task to check status of the pins on your RedBear Duo
   // Works by polling every X milliseconds where X is _sendDataFrequency
@@ -152,11 +158,17 @@ void loop()
     Serial.print(cm);
     Serial.println(" cm");
   }
-  
-  // The HC-SR04 datasheet recommends waiting at least 60ms before next measurement
-  // in order to prevent accidentally noise between trigger and echo
-  // See: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
-  delay(60);
+
+  if (cm <= ALARM_DIST_CM) {
+     digitalWrite(LED_PIN, HIGH);
+     tone(BUZZER_PIN, 6000);
+     delay(60);
+     digitalWrite(LED_PIN, LOW);
+     noTone(BUZZER_PIN);
+     delay(60);
+  } else {
+    delay(60);
+  }
 }
 
 /**
