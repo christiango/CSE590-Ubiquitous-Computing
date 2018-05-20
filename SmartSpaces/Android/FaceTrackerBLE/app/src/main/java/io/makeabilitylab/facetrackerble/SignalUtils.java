@@ -11,6 +11,6 @@ public class SignalUtils {
     }
 
     public static byte faceToServo(Face face, int previewWidth) {
-        return SignalUtils.doubleToByte(255 - (((face.getPosition().x + face.getWidth() / 2)/640.0) * 255));
+        return SignalUtils.doubleToByte(180 - (((face.getPosition().x + face.getWidth() / 2)/previewWidth) * 180));
     }
 }
