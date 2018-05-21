@@ -153,14 +153,6 @@ void loop()
   // Datasheet: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
   _distance = pulse_width / 58.0;
 
-  // Print out results
-  if ( pulse_width > MAX_DIST ) {
-    Serial.println("Out of range");
-  } else {
-    Serial.print(_distance);
-    Serial.println(" cm");
-  }
-
   if (_distance <= ALARM_DIST_CM) {
      digitalWrite(LED_PIN, HIGH);
      tone(BUZZER_PIN, 6000);
