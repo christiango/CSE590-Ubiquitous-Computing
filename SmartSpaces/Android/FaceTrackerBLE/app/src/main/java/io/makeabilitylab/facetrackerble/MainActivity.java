@@ -500,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
 
             Log.i(TAG, debugFaceInfo);
 
-            _faceSignalSmoother.smoothAndSendData(mBLEDevice, SignalUtils.faceToServo(face, CAMERA_PREVIEW_WIDTH));
+            _faceSignalSmoother.smoothAndSendData(mBLEDevice, SignalUtils.faceToServo(face, CAMERA_PREVIEW_HEIGHT));
 
             // If the music is playing we support switching the song if the user blinks with their right eye
             if (_musicPlaying) {

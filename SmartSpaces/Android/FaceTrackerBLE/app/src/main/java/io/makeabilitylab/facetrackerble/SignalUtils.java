@@ -11,6 +11,10 @@ public class SignalUtils {
     }
 
     public static byte faceToServo(Face face, int previewWidth) {
-        return SignalUtils.doubleToByte(180 - (((face.getPosition().x + face.getWidth() / 2)/previewWidth) * 180));
+        double fraction = (face.getPosition().x + face.getWidth() / 2)/previewWidth;
+
+        // We don't want to use the full 180 degrees of the servo, we want 45 - 135 degrees
+        double angle = fraction * 90 + 45;
+        return SignalUtils.doubleToByte(180 - angle);
     }
 }
