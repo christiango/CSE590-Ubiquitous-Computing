@@ -22,12 +22,12 @@
     </io.makeabilitylab.facetrackerble.camera.CameraSourcePreview>
 
     <Button
-        android:id="@+id/buttonFlip"
+        android:id="@+id/buttonPlayMusic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="flip"/>
+        android:text="Play Music"/>
 
     <TextView
         android:id="@+id/textViewBleStatus"

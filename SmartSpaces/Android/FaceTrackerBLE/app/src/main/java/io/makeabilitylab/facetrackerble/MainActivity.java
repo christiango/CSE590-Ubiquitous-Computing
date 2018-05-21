@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -55,6 +56,7 @@ import io.makeabilitylab.facetrackerble.camera.GraphicOverlay;
 public class MainActivity extends AppCompatActivity implements BLEListener{
 
     private SignalSmoother _faceSignalSmoother = new SignalSmoother();
+    private WinkDetector _winkDetector = new WinkDetector();
 
     private static final String TAG = "FaceTrackerBLE";
     private static final int RC_HANDLE_GMS = 9001;
@@ -79,6 +81,11 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
     // Note the device name and the length should be consistent with the ones defined in the Duo sketch
     private final String TARGET_BLE_DEVICE_NAME = "chrisgo";
 
+    private boolean _musicPlaying = false;
+    private MediaPlayer _mediaPlayer;
+    private int _songIndex = 0;
+    private final int[] _songResourceIds = { R.raw.bensoundcreativeminds, R.raw.bensoundhappyrock, R.raw.bensoundhey, R.raw.bensoundlittleidea};
+
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
@@ -94,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
         mPreview = (CameraSourcePreview) findViewById(R.id.cameraSourcePreview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
 
-        final Button button = (Button) findViewById(R.id.buttonFlip);
-        button.setOnClickListener(mFlipButtonListener);
+        final Button button = (Button) findViewById(R.id.buttonPlayMusic);
+        button.setOnClickListener(playMusicClick);
 
         if (savedInstanceState != null) {
             mIsFrontFacing = savedInstanceState.getBoolean("IsFrontFacing");
@@ -343,21 +350,50 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
         savedInstanceState.putBoolean("IsFrontFacing", mIsFrontFacing);
     }
 
-    /**
-     * Toggles between front-facing and rear-facing modes.
-     */
-    private View.OnClickListener mFlipButtonListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            mIsFrontFacing = !mIsFrontFacing;
-
-            if (mCameraSource != null) {
-                mCameraSource.release();
-                mCameraSource = null;
-            }
-
-            createCameraSource();
-            startCameraSource();
+    private void stopPlayingSong() {
+        if (_mediaPlayer != null) {
+            _mediaPlayer.stop();
+            _mediaPlayer.release();
+            _mediaPlayer = null;
         }
+        _musicPlaying = false;
+    }
+
+    private void playSong() {
+        stopPlayingSong();
+        _mediaPlayer = MediaPlayer.create(getApplicationContext(), _songResourceIds[_songIndex]);
+        _mediaPlayer.start();
+        _musicPlaying = true;
+    }
+
+    private void playNextSong() {
+        _songIndex = (_songIndex + 1) % _songResourceIds.length;
+        playSong();
+    }
+
+    private void playPreviousSong() {
+        _songIndex = _songIndex - 1;
+
+        if (_songIndex == -1) {
+            _songIndex = _songResourceIds.length - 1;
+        }
+
+        playSong();
+    }
+
+    /**
+     * Starts playing music
+     */
+    private View.OnClickListener playMusicClick = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (!_musicPlaying) {
+                playSong();
+            }
+            else {
+                stopPlayingSong();
+            }
+        }
+
     };
 
     //==============================================================================================
@@ -465,6 +501,16 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
             Log.i(TAG, debugFaceInfo);
 
             _faceSignalSmoother.smoothAndSendData(mBLEDevice, SignalUtils.faceToServo(face, CAMERA_PREVIEW_WIDTH));
+
+            // If the music is playing we support switching the song if the user blinks with their right eye
+            if (_musicPlaying) {
+                int winkResult = _winkDetector.AddData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability());
+               if(winkResult == 1) {
+                   playNextSong();
+               } else if (winkResult == -1) {
+                    playPreviousSong();
+               }
+            }
         }
 
         /**
