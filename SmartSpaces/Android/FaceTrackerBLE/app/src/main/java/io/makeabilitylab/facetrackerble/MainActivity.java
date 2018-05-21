@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
     private boolean _musicPlaying = false;
     private MediaPlayer _mediaPlayer;
     private int _songIndex = 0;
+
+    // The songs played in this application were obtained from https://www.bensound.com/.
+    // This site provides royalty free songs. Note that this code is meant for academic purposes and should not be distributed.
     private final int[] _songResourceIds = { R.raw.bensoundcreativeminds, R.raw.bensoundhappyrock, R.raw.bensoundhey, R.raw.bensoundlittleidea};
 
     //==============================================================================================
