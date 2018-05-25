@@ -211,10 +211,10 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
         // This processor distributes the items of detection results among individual trackers
         // so that you can detect multiple faces.
         // See: https://developers.google.com/android/reference/com/google/android/gms/vision/MultiProcessor
-        // MultiProcessor faceProcessor = new MultiProcessor.Builder<>(new FaceTrackerFactory()).build();
+        MultiProcessor faceProcessor = new MultiProcessor.Builder<>(new FaceTrackerFactory()).build();
 
         // This processor only finds the largest face in the frame.
-        LargestFaceFocusingProcessor faceProcessor = new LargestFaceFocusingProcessor(detector, new FaceTracker(mGraphicOverlay));
+        //LargestFaceFocusingProcessor faceProcessor = new LargestFaceFocusingProcessor(detector, new FaceTracker(mGraphicOverlay));
 
         // set the detector's processor
         detector.setProcessor(faceProcessor);
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements BLEListener{
     private class FaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new FaceTracker(mGraphicOverlay);
+            return new FaceCountTracker(mBLEDevice);
         }
     }
 

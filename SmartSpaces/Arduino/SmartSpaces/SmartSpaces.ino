@@ -32,6 +32,10 @@ SYSTEM_MODE(SEMI_AUTOMATIC);
 #define LED_PIN D8
 #define BUZZER_PIN D9
 
+#define LED_COUNT2_PIN D13 // the high order bit of the led face count
+#define LED_COUNT1_PIN D12 // the middle order bit of the led face count
+#define LED_COUNT0_PIN D11 // the low order bit of the led face count
+
 // Anything over 400 cm (23200 us pulse) is "out of range"
 const unsigned int MAX_DIST = 23200;
 
@@ -115,6 +119,10 @@ void setup() {
   digitalWrite(TRIG_PIN, LOW);
   pinMode(LED_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
+
+  pinMode(LED_COUNT2_PIN, OUTPUT);
+  pinMode(LED_COUNT1_PIN, OUTPUT);
+  pinMode(LED_COUNT0_PIN, OUTPUT);
 
   // Start a task to check status of the pins on your RedBear Duo
   // Works by polling every X milliseconds where X is _sendDataFrequency
@@ -218,9 +226,17 @@ int bleReceiveDataCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size
     // process the data. 
     if (receive_data[0] == 0x01) { //receive the face data 
       myservo.write(receive_data[1]);
+    } else if (receive_data[0] == 0x02) { // receive the number of faces
+      updateFaceCount(receive_data[1]);
     }
   }
   return 0;
+}
+
+void updateFaceCount(byte count) {
+  digitalWrite(LED_COUNT2_PIN, count & 4);
+  digitalWrite(LED_COUNT1_PIN, count & 2);
+  digitalWrite(LED_COUNT0_PIN, count & 1);
 }
 
 /**
